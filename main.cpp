@@ -101,7 +101,7 @@ void resizeCars(Car ** cars, short const size, short const newSize)
     Car *newCars = new Car[newSize];
     for(short i = 0; i < min(size, newSize); ++i)
     {
-        newCars[i] = cars[1][i];
+        newCars[i] = cars[0][i];
     }
     delete[] cars;
     *cars=newCars;

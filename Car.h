@@ -31,8 +31,8 @@ public:
     friend ostream& operator << (ostream &out, const Car &car_in);
     friend istream& operator >> (istream &in, Car &car_in);
 
-private:
-    string getModel();
     short getSpeed();
+    string getModel();
+private:
     string getColor();
 };

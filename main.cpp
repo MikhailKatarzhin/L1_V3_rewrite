@@ -17,23 +17,19 @@ void showMenu()
     cout << "\t1)Set model of car" << endl;
     cout << "\t2)Set speed of car" << endl;
     cout << "\t3)Set color of car" << endl;
-    cout << "\t4)----------" << endl;
-    cout << "\t5)----------" << endl;
-    cout << "\t6)----------" << endl;
-    cout << "\t7)----------" << endl;
-    cout << "\t8)Create a duplicate of this car" << endl;
-    cout << "\t9)Delete this car" << endl;
-    cout << "\t10)Add some cars" << endl;
-    cout << "\t11)Upgrade car" << endl;
-    cout << "\t12)Downgrade car" << endl;
-    cout << "\t13)Battle between cars!!!" <<endl;
+    cout << "\t4)Create a duplicate of this car" << endl;
+    cout << "\t5)Delete this car" << endl;
+    cout << "\t6)Add some cars" << endl;
+    cout << "\t7)Upgrade car" << endl;
+    cout << "\t8)Downgrade car" << endl;
+    cout << "\t9)Battle between cars!!!" << endl;
 }
 
 void showAllCars(short countOfCar, Car const * const cars)
 {
     for (short i = 0; i < countOfCar; i++)
     {
-        cout << i+1 << ")";
+        cout << "\n" << i+1 << ")";
         cars[i].printInformationAboutCar();
     }
 }
@@ -42,7 +38,7 @@ short requestNumberOfCar(short const countOfCar)
 {
     short i;
     do{
-        cout << "\nEntry number of car(to " << countOfCar << ") or close program(input 0)\n" << endl;
+        cout << "\n\nEntry number of car(to " << countOfCar << ") or close program(input 0)\n" << endl;
         string buffer;
         cin >> buffer;
         istringstream bufferStream(buffer);
@@ -103,16 +99,68 @@ void resizeCars(Car ** cars, short const size, short const newSize)
     {
         newCars[i] = cars[0][i];
     }
-    delete[] cars;
+    delete[] cars[0];
     *cars=newCars;
+}
+
+Car* resizeCars(Car const * const cars, short const size, short const newSize)
+{
+    Car *newCars = new Car[newSize];
+    for(short i = 0; i < min(size, newSize); ++i)
+    {
+        newCars[i] = cars[i];
+    }
+    delete[] cars;
+    return newCars;
+}
+
+void addSomeCar(Car ** cars, short * const countOfCar)
+{
+    short addCount = 0;
+    while (addCount < 1)
+    {
+        cout << "How many car add in database?" << endl;
+        string buffer;
+        cin >> buffer;
+        istringstream bufferStream(buffer);
+        bufferStream >> addCount;
+        if (addCount > 0)
+        {
+            break;
+        }else{
+            cout << "\nInvalid input, repeat..." << endl;
+        }
+    }
+    //cars = resizeCars(cars, countOfCar, countOfCar + addCount);
+    resizeCars(cars, *(countOfCar), *(countOfCar)+addCount);
+    *(countOfCar) += addCount;
+    for (; 0 < addCount; --addCount)
+    {
+        system("cls");
+        while(1)
+        {
+            cout << "\nCar #" << *(countOfCar)-addCount+1 << " \n|| Model ||\t|| Speed ||\t|| Color ||" << endl;
+            cin >> cars[0][*(countOfCar)-addCount];
+            if((cars[0][*(countOfCar)-addCount].getSpeed() > 0)&&
+               ((cars[0][*(countOfCar)-addCount].getModel() == "Normal")||
+                (cars[0][*(countOfCar)-addCount].getModel() == "Rarity")||
+                (cars[0][*(countOfCar)-addCount].getModel() == "Epic")||
+                (cars[0][*(countOfCar)-addCount].getModel() == "Legendary")||
+                (cars[0][*(countOfCar)-addCount].getModel() == "Mythical")))
+            {
+                break;
+            }else{
+                cout << "\nInvalid input, repeat..." << endl;
+            }
+        }
+    }
 }
 
 int main()
 {
-    string tmpModel, tmpColor;
-    short var = 0, countOfCar = 1, i = 0, y = 0, addCount = 0;
-    Car *cars = new Car[1], *tmpCars;
-    while (cars)
+    short countOfCar = 1, i = 0;
+    Car *cars = new Car[1];
+    while (countOfCar)
     {
         system("cls");
         cout << "\n\t\t\t***Car's database***\n\n";
@@ -127,9 +175,13 @@ int main()
         while (i != 0)
         {
             system("cls");
-            cout << "\nYou are working with car #" << i << "\t" << cars[i-1] << endl;
+            cout << "\nYou are working with car #" << i << "\t" << cars[i-1] << endl; ///Падает тут
             showMenu();
-            cin >> var;
+            short var;
+            string buffer;
+            cin >> buffer;
+            istringstream bufferStream(buffer);
+            bufferStream >> var;
             switch (var)
             {
                 case 0:
@@ -147,112 +199,66 @@ int main()
                     system("cls");
                     changeCarColor(&cars[i-1]);
                     break;
-                case 4:
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    break;
-                case 7:
-                    break;
-                case 8:{
-                    resizeCars(&cars, countOfCar, countOfCar+1);
-    /*Car *newCars = new Car[countOfCar+1];
-    for(short z = 0; z < min(countOfCar, countOfCar+1); ++z)
-    {
-        newCars[z] = cars[z];
-    }
-    delete[] cars;
-    cars=newCars;*/
+                case 4:{
+                    cars = resizeCars(cars, countOfCar, countOfCar+1);
+                    //resizeCars(&cars, countOfCar, countOfCar+1);
                     ++countOfCar;
                     cars[countOfCar-1] = cars[i-1];
                     break;}
-                case 9:{
+                case 5:{
+                    cars[i-1] = cars[countOfCar-1];
+                    cars = resizeCars(cars, countOfCar, countOfCar-1);
+                    //resizeCars(&cars, countOfCar, countOfCar-1);
+                    --countOfCar;
+                    i = 0;
                     break;}
-                case 10:{
-                    while (addCount < 1)
-                    {
-                        cout << "How many car add in database?" << endl;
-                        cin >> addCount;
-                    }
-                    countOfCar += addCount;
-                    tmpCars = new Car[countOfCar];
-                    for (y = 0; y < countOfCar-addCount; y++)
-                    {
-                        tmpCars[y] = cars[y];
-                        delete &(cars[y]);
-                    }
-                    addCount = 0;
-                    delete cars;
-                    cars = tmpCars;
-                    for (; y < countOfCar; y++)
-                    {
-                       /* cout << "\nCar #" << y << endl;
-                        cout << "Entry model of car" << endl;
-                        cin >> tmpModel;
-                        cout << "Entry speed of car" << endl;
-                        cin >> tmpspeed;
-                        cout << "Entry color of car" << endl;
-                        cin >> tmpColor;
-                        Car newCar(tmpModel, tmpspeed, tmpColor);*/
-                        Car newCar;
-                        cout << "\nCar #" << y+1 << " \nModel\tSpeed\tColor" << endl;
-                        cin >> newCar;
-                        cars[y] = newCar;
-                    }
-                }
-                case 11:
+                case 6:
+                    addSomeCar(&cars, &countOfCar);
+                    break;
+                case 7:
                     //++ cars[i-1];
                     cars[i-1] ++;
                     break;
-                case 12:
+                case 8:
                     //-- cars[i-1];
                     cars[i-1] --;
                     break;
-                case 13:
+                case 9:
+                    short y;
                     do{
                         cout << "\nSelect enemy for battle(to " << countOfCar <<"): ";
                         cin >> y;
                     }while ((y < 0)||(y > countOfCar));
                     if (cars[i-1] < cars[y-1])
                     {
-                        cout << "\nWin car... IN RIGHT CONNER!!!" << endl;
+                        system("cls");
+                        cout << "\n\n\t!!!Win car... IN RIGHT CONNER!!!" << endl;
+                        system("pause");
                         cars[y-1] ++;
-
                         cars[i-1] = cars[countOfCar-1];
-                        delete &(cars[countOfCar-1]);
-                        countOfCar --;
-                        tmpCars = new Car[countOfCar];
-                        for (y = 0; y < countOfCar; y++)
-                        {
-                            tmpCars[y] = cars[y];
-                            delete &(cars[y]);
-                        }
-                        delete cars;
-                        cars = tmpCars;
+                        cars = resizeCars(cars, countOfCar, countOfCar-1);
+                        //resizeCars(&cars, countOfCar, countOfCar-1);
+                        --countOfCar;
                     }else{
                         if (cars[i-1] == cars[y-1])
                         {
-                            cout << "\nWin car... No, no winner... Both rivals fell.." << endl;
+                            system("cls");
+                            cout << "\n\n\tWin car... No, no winner... Both rivals fell.." << endl;
+                            system("pause");
                             cars[i-1] --;
                             cars[y-1] --;
                         }else{
                             if (cars[i-1] > cars[y-1])
                             {
-                                cout << "\nWin car... IN LEFT CONNER!!!" << endl;
+                                system("cls");
+                                cout << "\n\n\n\t\t!!!Win car... IN LEFT CONNER!!!" << endl;
+                                system("pause");
                                 cars[i-1] ++;
 
                                 cars[y-1] = cars[countOfCar-1];
-                                delete &(cars[countOfCar-1]);
-                                countOfCar --;
-                                tmpCars = new Car[countOfCar];
-                                for (y = 0; y < countOfCar; y++)
-                                {
-                                    tmpCars[y] = cars[y];
-                                    delete &(cars[y]);
-                                }
-                                delete cars;
-                                cars = tmpCars;
+                                cars = resizeCars(cars, countOfCar, countOfCar-1);
+                                //resizeCars(&cars, countOfCar, countOfCar-1);
+                                --countOfCar;
                             }
                         }
                     }
@@ -260,5 +266,11 @@ int main()
                     break;
             }
         }
+    }
+    if (countOfCar == 0)
+    {
+        system("cls");
+        showAllCars(countOfCar, cars);
+        cout << "\n\n\t||**||\tWe're out of cars\t||**||\n\n";
     }
 }

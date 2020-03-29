@@ -96,15 +96,15 @@ void changeCarColor(Car * const car)
     car->setColor(tmpColor);
 }
 
-void resizeCars(Car cars[], short const size, short const newSize)
+void resizeCars(Car ** cars, short const size, short const newSize)
 {
     Car *newCars = new Car[newSize];
     for(short i = 0; i < min(size, newSize); ++i)
     {
-        newCars[i] = cars[i];
+        newCars[i] = cars[1][i];
     }
     delete[] cars;
-    cars=newCars;
+    *cars=newCars;
 }
 
 int main()
@@ -156,14 +156,14 @@ int main()
                 case 7:
                     break;
                 case 8:{
-                    //resizeCars(cars, countOfCar, countOfCar+1);
-    Car *newCars = new Car[countOfCar+1];
+                    resizeCars(&cars, countOfCar, countOfCar+1);
+    /*Car *newCars = new Car[countOfCar+1];
     for(short z = 0; z < min(countOfCar, countOfCar+1); ++z)
     {
         newCars[z] = cars[z];
     }
     delete[] cars;
-    cars=newCars;
+    cars=newCars;*/
                     ++countOfCar;
                     cars[countOfCar-1] = cars[i-1];
                     break;}
